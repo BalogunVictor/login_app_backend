@@ -122,12 +122,37 @@ export async function login(req, res) {
 }
 
 export async function getUser(req, res) {
-  res.json("getUser route");
+  const { username } = req.params;
+
+  try {
+    if (!username) return res.status(501).send({ error: "Invalid Username" });
+
+    UserModel.findOne({ username })
+      .then((user) => {
+        if (!user)
+          return res.status(501).send({ error: "Couldn't Find the User" });
+
+        /** remove password from user */
+        // mongoose return unnecessary data with object so convert it into json
+        const { password, ...rest } = Object.assign({}, user.toJSON());
+
+        return res.status(201).send(rest);
+      })
+      .catch((error) => res.status(500).send({ error }));
+  } catch (error) {
+    return res.status(500).send({ error: "Cannot Find User Data" });
+  }
 }
 
 export async function updateUser(req, res) {
-  res.json("updateUser route");
-}
+ try{
+  const id 
+
+ } catch (error) {
+  return res.status(401).send({ error})
+ }
+
+
 
 export async function generateOTP(req, res) {
   res.json("generateOTP route");
