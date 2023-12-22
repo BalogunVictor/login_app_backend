@@ -1,14 +1,17 @@
 import { Router } from "express";
-import Auth, { localVariables } from "../middleware/auth.js";
 const router = Router();
 
 /** import all controllers */
 import * as controller from "../controllers/appController.js";
+import Auth, { localVariables } from "../middleware/auth.js";
+import { registerMail } from "../controllers/mailer.js";
 
 /** POST Method */
 router.route("/register").post(controller.register); //register user
-// router.route("/registerMail").post(); // send the email
-router.route("/authenticate").post((req, res) => res.end()); //authenticate user
+router.route("/registerMail").post(registerMail); // send the email
+router
+  .route("/authenticate")
+  .post(controller.verifyUser, (req, res) => res.end()); //authenticate user
 router.route("/login").post(controller.verifyUser, controller.login); //login in app
 
 /** GET Method */
@@ -22,6 +25,8 @@ router.route("/createResetSession").get(controller.createResetSession); // reset
 
 /** PUT Method */
 router.route("/updateuser").put(Auth, controller.updateUser); //is use to update the user profile
-router.route("/resetPassword").put(controller.resetPassword); // use to reset the password
+router
+  .route("/resetPassword")
+  .put(controller.verifyUser, controller.resetPassword); // use to reset the password
 
 export default router;

@@ -196,6 +196,9 @@ export async function createResetSession(req, res) {
 //update the password when we have valid session
 export async function resetPassword(req, res) {
   try {
+    if (!req.app.locals.resetSession)
+      return res.status(440).send({ error: "Session expired!" });
+
     const { username, password } = req.body;
 
     try {
